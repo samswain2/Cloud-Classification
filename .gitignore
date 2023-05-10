@@ -1,0 +1,16 @@
+.ipynb_checkpoints/
+.idea/
+.DS_Store
+__pycache__/
+!.gitkeep
+*.pyc
+.pytest_cache/
+
+# Directories
+.vscode/*
+runs/*
+hw02_env/*
+data/*
+
+# Files
+*.log
