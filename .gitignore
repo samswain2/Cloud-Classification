@@ -10,7 +10,6 @@ __pycache__/
 .vscode/*
 runs/*
 hw02_env/*
-data/*
 
 # Files
 *.log
