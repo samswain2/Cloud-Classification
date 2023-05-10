@@ -1,0 +1,84 @@
+run_config:
+  name: Cloud Prediction  # Name of the prediction task
+  author: Sam Swain (AWS Expert)  # Author's name and expertise
+  version: default  # Version number
+  description: Classifies clouds into one of two types.  # Brief description of the task
+  dependencies: requirements.txt  # List of dependencies
+  data_source: https://archive.ics.uci.edu/ml/machine-learning-databases/undocumented/taylor/cloud.data # URL for data source
+
+create_dataset:
+  features:  # List of features to include in the dataset
+    - visible_mean
+    - visible_max
+    - visible_min
+    - visible_mean_distribution
+    - visible_contrast
+    - visible_entropy
+    - visible_second_angular_momentum
+    - IR_mean
+    - IR_max
+    - IR_min
+
+generate_features:
+  calculate_norm_range:  # Feature normalization
+    IR_norm_range:
+      min_col: IR_min
+      max_col: IR_max
+      mean_col: IR_mean
+    visible_norm_range:
+      min_col: visible_min
+      max_col: visible_max
+      mean_col: visible_mean
+  log_transform:  # Logarithmic feature transform
+    log_entropy: visible_entropy
+    log_visible_contrast: visible_contrast
+  multiply:  # Feature multiplication
+    entropy_x_contrast:
+      col_a: visible_contrast
+      col_b: visible_entropy
+  standard_scale:  # Feature scaling
+    - IR_mean
+    - visible_mean
+  sqrt_transform:  # Square root feature transform
+    sqrt_visible_entropy: visible_entropy
+    sqrt_IR_mean: IR_mean
+
+analysis:
+  log_warnings: False  # Set to True | False to log warnings
+  colors:  # List of colors for visualization
+    - "#0B3D91"
+    - "#4E2A84"
+
+train_model:
+  model_name: logistic_regression  # Choose from three below
+  test_train_split: 0.4  # Train-test split ratio
+  initial_features:  # List of initial features to include
+    - log_entropy
+    - IR_norm_range
+    - entropy_x_contrast
+  random_forest:  # Options for random forest model
+    n_estimators: 10
+    max_depth: 10
+  logistic_regression:  # Options for logistic regression model
+    solver: lbfgs
+    C: 1.0
+  decision_tree:  # Options for decision tree model
+    max_depth: 5
+
+score_model:
+  probability_threshold: 0.5  # Probability threshold for classification
+
+evaluate_performance:
+  metrics:  # List of metrics to evaluate model performance
+    - AUC
+    - confusion_matrix
+    - accuracy
+    - f1_score
+    - classification_report
+  log_confusion_matrix: True  # Set True | False to output confusion matrix
+
+aws:
+  upload: False  # Set True | False to upload results to AWS
+  bucket_name: "sms5736"  # Name of the AWS bucket
+  prefix: "cloud_engineering"  # Prefix for uploaded files
+  region: "us-east-2"  # AWS region to use

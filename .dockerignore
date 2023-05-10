@@ -1,0 +1,12 @@
+# Directories
+runs/*
+hw02_env/*
+data/*
+models/*
+notebooks/*
+
+# Files
+*.pylintrc
+*.md
+*.log
+*.gitignore
